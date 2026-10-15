@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JannooOS</title>
+<style>
+:root{--bg:#050505;--fg:#f4f4f4;--muted:#aaa;--line:#333;--panel:#111;--task:rgba(12,12,12,.92)}
+*{box-sizing:border-box}
+html,body{margin:0;width:100%;height:100%;overflow:hidden;background:var(--bg);color:var(--fg);font:14px "Segoe UI",Tahoma,sans-serif}
+button,input{font:inherit}button{cursor:pointer;color:inherit;background:#171717;border:1px solid #454545;border-radius:5px;padding:9px 13px}button:hover{background:#292929}
+.screen{position:fixed;inset:0;display:none}.screen.active{display:flex}
+#boot{align-items:center;justify-content:center;background:#000;font:14px Consolas,monospace}
+.bootbox{width:min(720px,90vw);line-height:1.9;color:#ddd}.bootbox h1{font-size:20px;font-weight:400;color:white;border-bottom:1px solid #777;padding-bottom:10px}
+.bootline{color:#999}.boot-actions{margin-top:25px;color:#eee}
+#setup{background:#050505;align-items:center;justify-content:center;font-family:Consolas,monospace}
+.setupbox{width:min(760px,92vw);border:1px solid #777;background:#101010;padding:22px;box-shadow:0 0 0 5px #181818}
+.setupbox h2{font-size:18px;font-weight:400;background:#ddd;color:#111;padding:8px;margin:-22px -22px 20px}
+.setupgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.setupitem{padding:10px;border:1px solid #333}
+#login{align-items:center;justify-content:center;text-align:center;background:radial-gradient(ellipse at center,#242424 0,#0c0c0c 45%,#000 100%)}
+.login-card{width:min(360px,90vw);padding:30px 24px;background:#101010d9;border:1px solid #333;border-radius:12px;box-shadow:0 18px 70px #000}
+.avatar{margin:0 auto 15px;width:78px;height:78px;border-radius:50%;background:#222;border:1px solid #555;display:grid;place-items:center;font-size:35px}
+.login-card h1{font-size:25px;margin:8px 0}.login-card p{color:#aaa}.login-card input{width:100%;padding:11px;border-radius:5px;background:#080808;border:1px solid #444;color:#fff;margin:10px 0}.login-card button{width:100%}
+#desktop{background:radial-gradient(ellipse at 48% 38%,#292929 0,#111 45%,#050505 100%);display:none}
+#desktop.active{display:block}
+.brand{position:absolute;top:25px;left:28px;font-size:14px;letter-spacing:3px;color:#eee}
+.brand strong{font-size:28px;display:block;letter-spacing:1px;margin-top:4px}
+.desktop-icons{position:absolute;top:85px;left:22px;display:grid;gap:18px}
+.appicon{width:78px;text-align:center;padding:8px 4px;border:1px solid transparent;border-radius:7px;cursor:pointer;font-size:12px}
+.appicon:hover{background:#ffffff12;border-color:#ffffff22}.appicon span{font-size:27px;display:block;margin-bottom:7px}
+.window{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(540px,90vw);min-height:230px;background:#101010f5;border:1px solid #555;border-radius:9px;box-shadow:0 20px 80px #000;display:none;overflow:hidden}
+.window.open{display:block}.winhead{display:flex;align-items:center;justify-content:space-between;padding:12px 14px;background:#1b1b1b;border-bottom:1px solid #333;font-weight:600}.winbody{padding:20px;line-height:1.6;color:#ddd}.winbody h2{margin-top:0}.close{padding:3px 10px;background:#222}
+#taskbar{position:absolute;bottom:0;left:0;right:0;height:54px;display:flex;align-items:center;justify-content:center;gap:8px;background:var(--task);border-top:1px solid #333;backdrop-filter:blur(16px)}
+.taskbtn{height:38px;min-width:40px;padding:6px 10px;font-size:18px;background:transparent;border-color:transparent}.taskbtn:hover{background:#ffffff15}
+#tray{position:absolute;right:14px;display:flex;gap:13px;align-items:center;font-size:12px;color:#ddd}
+#startmenu{position:absolute;bottom:64px;left:50%;transform:translateX(-50%);width:min(390px,92vw);padding:18px;background:#101010f5;border:1px solid #444;border-radius:12px;display:none;box-shadow:0 15px 60px #000}
+#startmenu.open{display:block}#startmenu h2{font-size:17px;font-weight:500;margin:2px 0 14px}#startmenu .startgrid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+#shutdown{align-items:center;justify-content:center;text-align:center;background:#000;font-family:Consolas,monospace}
+#shutdown h1{font-size:22px;font-weight:400}
+.small{font-size:12px;color:#999}
+@media(max-width:520px){#tray{right:8px;gap:6px}#clocklabel{display:none}.setupgrid{grid-template-columns:1fr}.desktop-icons{left:8px}.brand{left:16px}}
+</style>
+</head>
+<body>
+<section id="boot" class="screen active" onclick="bootNext()" onkeydown="bootNext()">
+ <div class="bootbox"><div class="bootline">Jannoo Firmware Utility</div><h1>JANNOO BIOS Setup Utility – v6.00</h1>
+ <div>JannooOS wird gestartet …</div><div class="bootline">Memory Test: OK</div><div class="bootline">Storage Device: Detected</div><div class="bootline">System Check: Passed</div>
+ <div class="boot-actions">Drücke <b>ENTF</b> für SETUP · Leertaste / Klick: überspringen</div><p class="small">JannooOS · Copyright © 2026 Jannoo</p>
+ </div>
+</section>
+<section id="setup" class="screen">
+ <div class="setupbox"><h2>Jannoo BIOS Setup Utility</h2><p>← → Seite · ↑ ↓ Auswahl · Enter · F10 Speichern &amp; Beenden · ESC Beenden</p>
+ <div class="setupgrid"><div class="setupitem">Main<br><span class="small">System Time: Auto</span></div><div class="setupitem">Advanced<br><span class="small">Startup Options</span></div><div class="setupitem">Boot<br><span class="small">Boot Priority: JannooOS</span></div><div class="setupitem">Security<br><span class="small">System Security: Enabled</span></div></div>
+ <p style="margin-top:22px">F10: Save &amp; Exit</p><button onclick="showScreen('login')">Speichern &amp; Beenden</button> <button onclick="showScreen('boot')">Abbrechen</button>
+ </div>
+</section>
+<section id="login" class="screen">
+ <div class="login-card"><div class="avatar">👤</div><h1>JannooOS</h1><p>Willkommen zurück</p><input id="username" value="Admin" aria-label="Benutzername"><button onclick="login()">Anmelden →</button><p class="small">Lokale Demo – kein echtes Konto erforderlich</p></div>
+</section>
+<section id="desktop" class="screen">
+ <div class="brand">JANNOO<strong>JannooOS</strong><span class="small">Dein Desktop. Dein Setup.</span></div>
+ <div class="desktop-icons">
+  <div class="appicon" onclick="openApp('about')"><span>🖥️</span>Über Jannoo</div>
+  <div class="appicon" onclick="openApp('files')"><span>📁</span>Dateien</div>
+  <div class="appicon" onclick="openApp('notes')"><span>📝</span>Notizen</div>
+  <div class="appicon" onclick="openApp('settings')"><span>⚙️</span>Einstellungen</div>
+ </div>
+ <div id="appwindow" class="window"><div class="winhead"><span id="wintitle">Jannoo</span><button class="close" onclick="closeApp()">✕</button></div><div id="winbody" class="winbody"></div></div>
+ <div id="startmenu"><h2>JannooOS</h2><div class="startgrid">
+ <button onclick="openApp('about');toggleStart()">🖥️ Über Jannoo</button><button onclick="openApp('files');toggleStart()">📁 Dateien</button><button onclick="openApp('notes');toggleStart()">📝 Notizen</button><button onclick="openApp('settings');toggleStart()">⚙️ Einstellungen</button><button onclick="showScreen('login')">🔒 Abmelden</button><button onclick="showScreen('shutdown')">⏻ Ausschalten</button>
+ </div></div>
+ <div id="taskbar"><button class="taskbtn" onclick="toggleStart()" title="Start">⊞</button><button class="taskbtn" onclick="openApp('files')" title="Dateien">📁</button><button class="taskbtn" onclick="openApp('notes')" title="Notizen">📝</button><button class="taskbtn" onclick="openApp('settings')" title="Einstellungen">⚙️</button><div id="tray"><span>🛡️</span><span>📶</span><span>🔊</span><span id="clocklabel">16:00</span></div></div>
+</section>
+<section id="shutdown" class="screen"><div><h1>Der Computer kann jetzt ausgeschaltet werden.</h1><p>JannooOS wurde heruntergefahren.</p><button onclick="showScreen('boot')">⏻ Einschalten</button></div></section>
+<script>
+const screens=['boot','setup','login','desktop','shutdown'];
+function showScreen(id){screens.forEach(s=>document.getElementById(s).classList.toggle('active',s===id));document.getElementById('startmenu').classList.remove('open')}
+function bootNext(){showScreen('login')}
+document.addEventListener('keydown',e=>{if(e.key==='Delete'&&document.getElementById('boot').classList.contains('active'))showScreen('setup');else if(e.key==='Escape'){if(document.getElementById('setup').classList.contains('active'))showScreen('login');else closeApp();document.getElementById('startmenu').classList.remove('open')}else if(e.code==='Space'&&document.getElementById('boot').classList.contains('active')){e.preventDefault();bootNext()}});
+function login(){showScreen('desktop')}
+function toggleStart(){document.getElementById('startmenu').classList.toggle('open')}
+function closeApp(){document.getElementById('appwindow').classList.remove('open')}
+function openApp(app){const win=document.getElementById('appwindow'),title=document.getElementById('wintitle'),body=document.getElementById('winbody');const pages={
+about:['Über JannooOS','<h2>JannooOS</h2><p>Eine kleine Desktop-Demo von <b>Jannoo</b>.</p><p>Version 1.0 · Schwarz-Weiß Edition</p><p class="small">Diese Website ist eine Simulation und verändert keine Systemeinstellungen.</p>'],
+files:['Dateien','<h2>Dieser PC</h2><p>📁 Dokumente</p><p>📁 Downloads</p><p>📁 Bilder</p><p class="small">Demo-Dateiansicht – zeigt keine echten Dateien an.</p>'],
+notes:['Notizen','<h2>Schnellnotiz</h2><textarea style="width:100%;height:110px;background:#080808;color:#eee;border:1px solid #444;border-radius:5px;padding:10px" placeholder="Schreib etwas auf …"></textarea>'],
+settings:['Einstellungen','<h2>Einstellungen</h2><p>Darstellung: Schwarz-Weiß</p><p>Status: Alles bereit</p><button onclick="document.body.style.fontFamily=\'Consolas,monospace\'">Retro-Schrift aktivieren</button> <button onclick="document.body.style.fontFamily=\'Segoe UI,Tahoma,sans-serif\'">Standardschrift</button>']
+};title.textContent=pages[app][0];body.innerHTML=pages[app][1];win.classList.add('open')}
+function tick(){document.getElementById('clocklabel').textContent=new Date().toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit',second:'2-digit'})}tick();setInterval(tick,1000);
+</script>
+</body>
+</html>
